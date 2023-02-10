@@ -1,31 +1,39 @@
 import { StyleSheet, View, Text, Dimensions } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, Component } from 'react'
 import { TextInput, Card } from 'react-native-paper';
 import { TouchableOpacity } from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native"
-
+import { ButtonGroup } from 'react-native-elements';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import CategoryButtonGroup from '../components/GroupButton'
 
 const NoteForm = () => {
     const [note, setNote] = useState('')
     const navigation = useNavigation()
- const newNote = {  note, date: `${new Date().getDate()}.${new Date().getMonth()}.${new Date().getFullYear()} ${new Date().getHours()}:${new Date().getMinutes()}` }
-    
+    const [selectedCategory, setSelectedCategory] = useState("");
+
+    const handleCategoryPress = (category) => {
+        setSelectedCategory(category);
+        newNote.category = category;
+    };
+
+    const newNote = { note, date: `${new Date().getDate()}.${new Date().getMonth()}.${new Date().getFullYear()} ${new Date().getHours()}:${new Date().getMinutes()}`, category: selectedCategory };
 
 
     const saveNote = async () => {
-       console.log({ note });
+        console.log({ note });
         console.log({ newNote });
         const value = await AsyncStorage.getItem("NOTES")
         const n = value ? JSON.parse(value) : []
         n.push(newNote);
         await AsyncStorage.setItem("NOTES", JSON.stringify(n))
-            
+
         setNote('')
         console.log({ note });
         console.log({ newNote });
     }
-    
+
 
     return (
         <View style={styles.container}>
@@ -39,6 +47,7 @@ const NoteForm = () => {
                     onChangeText={setNote}
                 />
             </View>
+            <CategoryButtonGroup onPress={handleCategoryPress} />
             <View style={styles.containerMid}>
                 <TouchableOpacity
                     style={styles.form}
@@ -59,7 +68,7 @@ const styles = StyleSheet.create({
         marginTop: 40,
         width: "100%",
         alignItems: "center",
-        justifyContent: "center",
+        flexDirection: "row "
     },
     input: {
         height: 150,
@@ -70,7 +79,8 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderWidth: 1,
         backgroundColor: "purple",
-        height: 40
+        height: 40,
+  
     },
     inputtxt: {
         fontSize: 15,
@@ -85,5 +95,9 @@ const styles = StyleSheet.create({
     },
     containerMid: {
         padding: 20
+    },
+    containerB: {
+        justifyContent: "center",
+        width: Dimensions.get("window").width - 50,
     }
 })
