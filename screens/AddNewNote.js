@@ -5,11 +5,13 @@ import NoteForm from '../components/NoteForm'
 
 
 
+
 const AddNewNote = () => {
     return (
         <View>
             
             <NoteForm />
+        
         </View>
     )
 }

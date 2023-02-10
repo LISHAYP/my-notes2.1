@@ -9,6 +9,8 @@ export default function AllNotes(props) {
     const [notes, setNotes] = useState([])
     const navigation = useNavigation();
 
+    const category = props.route.params.category;
+    console.log(category + ' working!')
     useFocusEffect(
         React.useCallback(() => {
             getNotes()
@@ -22,19 +24,7 @@ export default function AllNotes(props) {
 
     }
 
-
-    const clearAll = async () => {
-        try {
-            await AsyncStorage.clear()
-        } catch (e) {
-
-        }
-
-        console.log('Done.')
-        alert("all notes deleted! ")
-        navigation.navigate("Home")
-    }
-
+   
     const removeNote = async (index) => {
         try {
             let notes = await AsyncStorage.getItem("NOTES");
@@ -50,6 +40,7 @@ export default function AllNotes(props) {
     return (
         <ScrollView>
             <View style={styles.container}>
+                <Text style={styles.header}> {category} </Text>
                 <View style={styles.containerMid}>
                     <TouchableOpacity
                         style={styles.form}
@@ -62,7 +53,7 @@ export default function AllNotes(props) {
 
                 <View style={styles.notes}>
                     {notes ?
-                        notes.map((item, index) => (
+                        notes.filter(note => note.category === category).map((item, index) => (
                             <View style={styles.bigView}>
                                 <TouchableOpacity onPress={() => removeNote(index)}>
                                     <View style={styles.trash}>
@@ -74,24 +65,15 @@ export default function AllNotes(props) {
                                     <Text style={styles.notes}>{item.note}</Text>
                                 </View>
                             </View>
-                        ))
-                        :
-                        <View><Text style={styles.date}>no notes...</Text></View>}
-
+                        )) : null
+                    }
                 </View>
 
-                <View style={styles.containerMid}>
-                    <TouchableOpacity
-                        style={styles.form}
-                        onPress={clearAll}
-                    >
-                        <Text style={styles.buttontxt}>
-                            clear all  <Icon name="add-outline" />
-                        </Text>
-                    </TouchableOpacity>
-                </View>
             </View>
-        </ScrollView>
+
+         
+         
+        </ScrollView >
     );
 }
 
@@ -117,11 +99,12 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderWidth: 1,
         backgroundColor: "purple",
-        height: 40
+        height: 40,
+  
     },
     card: {
-        padding: 10,
-        marginLeft: 40,
+        padding: 12,
+        marginLeft: 10,
         fontSize: 18,
         width: "80%",
         borderRadius: 5,
@@ -135,10 +118,19 @@ const styles = StyleSheet.create({
 
     },
     trash: {
-        fontSize: 30,
-        textAlign:"left"
+        fontSize: 45,
+        marginTop:7
+       
     },
     bigView: {
-
+flexDirection:"row",
+padding:5
     }
+,
+header:{
+    textAlign: "center",
+    fontSize:50,
+    fontWeight:"bold",
+    color:"#FF1493"
+}
 });
